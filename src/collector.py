@@ -5,11 +5,15 @@ import sys
 import subprocess
 import time
 import threading
+
+# 1. SỬA LỖI IMPORT: Đưa khai báo đường dẫn lên TRƯỚC
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
+
+# Bây giờ mới gọi các file của dự án ra thì Python mới tìm thấy được
 from dnd_manager import open_dnd_settings
 from analyzer import process_and_notify_async, encrypt_sender_name
-# Thêm thư mục gốc vào path
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
 
 from winsdk.windows.ui.notifications import (
     NotificationKinds,
@@ -20,8 +24,6 @@ from winsdk.windows.ui.notifications.management import (
     UserNotificationListenerAccessStatus,
 )
 
-from analyzer import process_and_notify_async
-
 APP_NAME_MAP = {
     "zalo": "Zalo",
     "facebook.messenger": "Messenger",
@@ -30,7 +32,7 @@ APP_NAME_MAP = {
     "discord": "Discord",
 }
 
-IGNORED_APP_KEYWORDS = [
+IGNORED_APP_KEYWORDS = [ 
     "screensketch",
     "windows.defender",
     "securityhealth",
@@ -39,14 +41,14 @@ IGNORED_APP_KEYWORDS = [
     "setup",
 ]
 
-APP_START_TIME = time.time()  # MỐC THỜI GIAN KHỞI CHẠY ỨNG DỤNG
-RECENT_NOTIFICATIONS = {}
-PROCESSED_NOTIF_IDS = set()  # BỘ LƯU ID CHỐNG LẶP THÔNG BÁO TỪ WINDOWS
-LOCK = threading.Lock()
-PRINT_LOCK = asyncio.Lock()  # Khóa đồng bộ luồng in ấn và phân tích AI
-NOTIFICATION_QUEUE = asyncio.Queue()
+APP_START_TIME = time.time() #Dùng hàm time ở trên chốt giờ bắt đầu chạy.
+RECENT_NOTIFICATIONS = {} #Tạo một dict để lưu trữ các thông báo gần đây đã xử lý, dùng để chống trùng lặp.
+PROCESSED_NOTIF_IDS = set() #Tạo một set để lưu trữ các ID thông báo đã xử lý, dùng để tránh xử lý lại cùng một thông báo nhiều lần.
+LOCK = threading.Lock() #Tạo một lock để đồng bộ hóa truy cập vào các cấu trúc dữ liệu chia sẻ giữa các luồng, tránh xung đột khi nhiều luồng cùng truy cập.
 
-# Biến lưu trữ tiến trình Zalo và Event Loop
+# 2. SỬA LỖI ASYNCIO: Khai báo rỗng ở ngoài
+PRINT_LOCK = None  
+NOTIFICATION_QUEUE = None
 ZALO_PROCESS = None
 MAIN_LOOP = None
 
@@ -247,19 +249,36 @@ async def notification_worker():
 
 
 async def start_listener():
-    global ZALO_PROCESS, MAIN_LOOP
+    global ZALO_PROCESS, MAIN_LOOP, PRINT_LOCK, NOTIFICATION_QUEUE
+    
+    # 2. SỬA LỖI ASYNCIO: Khởi tạo thực sự ở bên trong Event Loop
     MAIN_LOOP = asyncio.get_running_loop()
+    PRINT_LOCK = asyncio.Lock()
+    NOTIFICATION_QUEUE = asyncio.Queue()
 
     print("\n=========================================================")
-    print("🛡️  SMART FOCUS GUARD - UNIFIED COLLECTOR IS RUNNING     🛡️")
+    print("🛡️  SMART FOCUS GUARD - UNIFIED COLLECTOR IS RUNNING    🛡️")
     print("=========================================================")
 
     open_dnd_settings()
     # 1. KÍCH HOẠT ZALO BẰNG ĐA TIẾN TRÌNH (SUBPROCESS - CÁCH LY 100%)
-    zalo_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zalo_interceptor.py")
+    # 1. KÍCH HOẠT ZALO BẰNG ĐA TIẾN TRÌNH (AN TOÀN CHO ĐÓNG GÓI .EXE)
+    import multiprocessing
+    # Kiểm tra xem chương trình đang chạy dưới dạng file .exe đóng gói hay code .py
+    if getattr(sys, 'frozen', False):
+        # Môi trường file .exe (PyInstaller giải nén file tạm vào sys._MEIPASS)
+        zalo_script_path = os.path.join(sys._MEIPASS, "zalo_interceptor.py")
+    else:
+        # Môi trường chạy code .py bình thường
+        zalo_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zalo_interceptor.py")
+
     if os.path.exists(zalo_script_path):
         try:
-            ZALO_PROCESS = subprocess.Popen([sys.executable, zalo_script_path])
+            # Truyền chính xác đường dẫn Python để không bị gọi nhầm vào app.exe
+            import multiprocessing.spawn
+            python_exe = multiprocessing.spawn.get_executable()
+            
+            ZALO_PROCESS = subprocess.Popen([python_exe, zalo_script_path])
             print("✅ [ZALO] Đã kích hoạt Zalo Interceptor (Tiến trình độc lập) thành công!")
         except Exception as e:
             print(f"❌ [LỖI ZALO SUBPROCESS]: {e}")
@@ -267,8 +286,8 @@ async def start_listener():
         print("⚠️ [ZALO] Không tìm thấy file zalo_interceptor.py cùng thư mục.")
 
     # 2. KHỞI ĐỘNG WINDOWS ACTION CENTER LISTENER
-    listener = UserNotificationListener.current
-    status = await listener.request_access_async()
+    listener = UserNotificationListener.current  # Lấy listener hiện tại của Windows Action Center
+    status = await listener.request_access_async() # Tạo quyền truy cập Action Center (nếu chưa có)
 
     if status != UserNotificationListenerAccessStatus.ALLOWED:
         print("❌ [LỖI] Chưa được cấp quyền truy cập thông báo Windows Action Center!")
@@ -333,7 +352,10 @@ async def start_listener():
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
     try:
         asyncio.run(start_listener())
     except KeyboardInterrupt:
         pass
+
