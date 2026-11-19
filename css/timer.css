@@ -1,0 +1,379 @@
+/* Trang chủ: đồng hồ Timer/Stopwatch */
+.stage {
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+.dial {
+  --s: min(88vh, 64vw);
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+}
+.dial svg.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.in {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--s) * 0.035);
+}
+
+/* MỚI: hiệu ứng nhún 1 cái */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.92);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Timer / Stopwatch */
+/* Timer / Stopwatch */
+/* Khung chứa 2 nút */
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, calc(var(--s) * 0.19));
+  border: 2px solid #fff;
+  border-radius: 6px;
+  padding: calc(var(--s) * 0.005);
+  background: rgba(0, 0, 0, 0.15);
+  isolation: isolate; /* Tạo lớp layer riêng */
+}
+
+/* THỎI MÀU VÀNG CHẠY QUA CHẠY LẠI */
+.seg::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--s) * 0.005);
+  bottom: calc(var(--s) * 0.005);
+  left: calc(var(--s) * 0.005);
+  width: calc(50% - var(--s) * 0.005);
+  background: var(--y);
+  border-radius: 4px;
+  z-index: 1; /* Nằm dưới chữ nhưng nằm trên khung */
+
+  /* HIỆU ỨNG LƯỚT: Trượt qua trượt lại trong 0.25 giây */
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Khi nút thứ 2 (Stopwatch) được chọn (.on) -> Trượt thỏi vàng sang phải */
+.seg:has(button:nth-child(2).on)::before {
+  transform: translateX(100%);
+}
+
+/* Định dạng chữ của 2 nút timer và stopwatch*/
+.seg button {
+  position: relative;
+  z-index: 2; /* Nằm đè lên trên thỏi màu vàng */
+  padding: calc(var(--s) * 0.006) 0;
+  border: none;
+  background: transparent !important; /* Bỏ background riêng của từng nút */
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  border-radius: 4px;
+  font-size: calc(var(--s) * 0.03);
+  line-height: 1.2;
+  color: #fff;
+  text-align: center;
+  min-width: 0;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    font-weight 0.2s ease;
+}
+
+/* Khi nút được bật (.on) -> Đổi chữ sang màu đen và đậm */
+.seg button.on {
+  color: #111;
+  font-weight: 600;
+}
+
+.seg button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Study / Work / Read */
+.modes {
+  display: flex;
+  gap: calc(var(--s) * 0.098);
+  margin-top: calc(var(--s) * 0.01);
+}
+.modes button {
+  width: calc(var(--s) * 0.2);
+  padding: calc(var(--s) * 0.009) 0; /* dẹp lại */
+  border: 2px solid #fff;
+  border-radius: 4px;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.15
+  ); /* nền tối khi đè lên vùng sáng */
+  color: #fff;
+  font-family: Inter, sans-serif;
+  font-weight: 400; /* mặc định nét mỏng */
+  font-size: calc(var(--s) * 0.03);
+  line-height: 1.2;
+  transition: 0.15s;
+}
+.modes button.on {
+  background: var(--y);
+  color: #111; /* chữ đen */
+  font-weight: 600; /* chỉ khi chọn mới đậm */
+  border-color: #fff; /* viền vẫn trắng, không đổi sang vàng */
+}
+
+/* Nút bị mờ như "Read" */
+.modes button.dim,
+.modes button:disabled {
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(0, 0, 0, 0.15);
+  cursor: not-allowed;
+}
+
+.clock {
+  font-family: Inter;
+  font-weight: 800;
+  font-size: calc(var(--s) * 0.125);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  text-shadow: none;
+}
+.clock .hg {
+  position: absolute;
+  right: calc(var(--s) * -0.1);
+  bottom: calc(var(--s) * -0.04);
+  width: calc(var(--s) * 0.08);
+  height: calc(var(--s) * 0.08);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.15);
+}
+.clock .hg:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.clock .hg img {
+  width: 65%;
+  height: 65%;
+}
+.start {
+  width: calc(var(--s) * 0.34);
+  padding: calc(var(--s) * 0.014) 0;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  font-size: calc(var(--s) * 0.035);
+  background: rgba(0, 0, 0, 0.15);
+  font-weight: 400;
+  outline: none; /* MỚI */
+  -webkit-tap-highlight-color: transparent; /* MỚI */
+  transition: 0.15s; /* MỚI */
+}
+
+/* MỚI: nút Start/Pause khi đang chạy: nền vàng, chữ đen, viền trắng, nhún 1 cái */
+.start.on {
+  background: var(--y);
+  color: #111;
+  font-weight: 700;
+  border-color: #fff;
+  animation: pop 0.25s ease;
+}
+
+.reset {
+  width: calc(var(--s) * 0.075);
+  height: calc(var(--s) * 0.075);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.15);
+}
+.reset svg {
+  width: 55%;
+  height: 55%;
+}
+/* MỚI: Reset mờ khi chưa bấm Start (giống nút đồng hồ cát khi bị khóa) */
+.reset:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Nhún khi nhắn vào */
+.clock .hg:active:not(:disabled),
+.reset:active:not(:disabled),
+.btn:active,
+.vol-left:active {
+  animation: pop 0.25s ease;
+}
+
+/* Gộp tất cả các nút ở màn hình chính, thanh menu bên trái và nút loa */
+.seg button:hover:not(.on),
+.modes button:hover:not(.on),
+.start:hover:not(.on),
+.side button:hover:not(.on) {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 1. Thêm hiệu ứng chuyển động mượt cho các nút ở trạng thái bình thường */
+.clock .hg,
+.reset,
+.btn,
+.vol-left {
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 2. Khi hover: Đổi màu, phóng to nhẹ (scale) và thêm bóng đổ (box-shadow) để tạo cảm giác nổi lên */
+.clock .hg:hover:not(:disabled),
+.reset:hover:not(:disabled),
+.btn:hover,
+.vol-left:hover {
+  background: #ffbd1f !important;
+  transform: scale(1.08); /* Phóng to nút lên 108% (chỉnh thành 1.05 nếu muốn phóng nhỏ hơn) */
+}
+
+
+
+
+/* ===== Hộp nhập giờ (Set time) ===== */
+.tm-modal {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: calc(var(--s) * 0.8);
+  padding: calc(var(--s) * 0.022) calc(var(--s) * 0.03) calc(var(--s) * 0.03);
+  border-radius: calc(var(--s) * 0.025);
+  background: #000;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.tm-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.tm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: calc(var(--s) * 0.014);
+  border-bottom: 2px solid var(--y);
+  margin-bottom: calc(var(--s) * 0.025);
+}
+
+/*set time*/
+.tm-tag {
+  background: var(--y);
+  color: #111;
+  font-weight: 700;
+  font-size: calc(var(--s) * 0.02);
+  padding: calc(var(--s) * 0.004) calc(var(--s) * 0.02);
+  border-radius: 4px;
+  border: 2px solid #fff;
+}
+.tm-close {
+  width: calc(var(--s) * 0.04);
+  height: calc(var(--s) * 0.04);
+  color: var(--y);
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s;
+}
+.tm-close svg {
+  width: 100%;
+  height: 100%;
+}
+.tm-close:hover {
+  transform: scale(1.12);
+}
+
+.tm-input {
+  width: 100%;
+  padding: calc(var(--s) * 0.018) calc(var(--s) * 0.025);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: calc(var(--s) * 0.02);
+  background: transparent;
+  color: #fff;
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: calc(var(--s) * 0.04);
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.tm-input:focus,
+.tm-input:focus-visible {
+  outline: none !important; /* tắt viền trắng của base.css */
+  border-color: var(--y); /* viền vàng */
+  box-shadow: 0 0 0 1px var(--y); /* làm viền vàng dày hơn, bỏ dòng này nếu không cần */
+}
+
+.tm-input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  font-size: calc(var(--s) * 0.021);
+  letter-spacing: 0;
+}
+
+.tm-hint {
+  min-height: 1em;
+  margin-top: calc(var(--s) * 0.012);
+  font-size: calc(var(--s) * 0.02);
+  color: #ffbd1f;
+}
+.tm-modal.err .tm-input {
+  border-color: #ffbd1f;
+}
+.tm-modal.err {
+  animation: tm-shake 0.3s;
+}
+@keyframes tm-shake {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  25% {
+    transform: translate(calc(-50% - 6px), -50%);
+  }
+  75% {
+    transform: translate(calc(-50% + 6px), -50%);
+  }
+}
+
+/* Làm tối màn hình khi mở hộp nhập giờ 
+.tm-modal.show {
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6);
+}
+.stage:has(.tm-modal.show) {
+  z-index: 4; 
+} 
+

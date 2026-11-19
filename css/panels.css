@@ -1,0 +1,497 @@
+/* Trang Setting, Introduce, Log */
+
+/* bảng */
+.panel {
+  left: max(23vw, 200px);
+  right: 13vw;
+  top: 15vh;
+  bottom: 9vh;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.2);
+
+  -webkit-backdrop-filter: blur(10px);
+  padding: 3vh 2.4vw;
+  z-index: 2;
+  overflow: auto;
+}
+
+/* THÊM: Tự động bỏ bo góc trái trên của .panel nếu trang xuất hiện .tabh (như Setting, Introduce) */
+body:has(.tabh) .panel {
+  border-top-left-radius: 0;
+}
+
+/*cục màu vàng nằm trên bảng */
+.tabh {
+  position: absolute;
+  left: max(23vw, 200px);
+  top: 8vh; /* SỬA: 9vh → 8vh */
+  height: 7vh; /* THÊM: 8vh + 7vh = 15vh, chạm đúng mép trên .panel */
+  box-sizing: border-box; /* THÊM */
+  display: flex; /* THÊM: căn chữ ra giữa */
+  align-items: center; /* THÊM */
+  padding: 0 calc(2.4vw + 1vh); /* SỬA: 1vh là độ dày màng quanh cục vàng */
+  background: rgba(0, 0, 0, 0.2); /* SỬA: màu màng, GIỐNG .panel */
+  -webkit-backdrop-filter: blur(10px); /* THÊM: giống .panel */
+
+  border-bottom: none; /* THÊM: đáy không viền, liền xuống bảng */
+  color: #111;
+  font-weight: 800;
+  border-radius: 14px 14px 0 0; /* SỬA: chỉ bo 2 góc trên */
+  z-index: 3;
+  font-size: clamp(14px, 2.3vh, 20px);
+}
+
+/* THÊM MỚI: cục vàng nằm lọt trong màng */
+.tabh::before {
+  content: "";
+  position: absolute;
+  inset: 1vh; /* cách mép màng 1vh (bằng số trong padding) */
+  background: var(--y);
+  border: 2px solid #fff; /* THÊM: viền trắng */
+  border-radius: 6px;
+  z-index: -1; /* nằm dưới chữ Setting */
+}
+
+h3 {
+  color: var(--y);
+  font-weight: 700;
+  font-size: clamp(16px, 2.6vh, 24px);
+  margin-bottom: 1vh;
+}
+.p {
+  font-size: clamp(13px, 2.4vh, 21px);
+  line-height: 1.6;
+  text-align: justify;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2vh 1.4vw;
+  margin: 2vh 0 10vh;
+}
+
+/* Thanh ngang màu trắng */
+.divider {
+  width: 100%;
+  height: 1.5px;
+  background: #fff;
+  opacity: 0.25;
+
+  /* XÓA dòng margin: 2vh 0; cũ đi và thay bằng 2 dòng dưới đây */
+  position: relative;
+  top: -5vh; /* Số dương để đẩy thanh đi XUỐNG, số âm (vd -2vh) để kéo thanh đi LÊN */
+}
+
+.src {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2vh 1.2vw;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.18);
+  font-weight: 700;
+  font-size: clamp(14px, 2.4vh, 20px);
+}
+.src.on {
+  background: linear-gradient(90deg, #ff9a1f, #ffe79a);
+  color: #222;
+}
+.src small {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+}
+.sw {
+  width: 50px;
+  height: 24px;
+  border-radius: 999px;
+  background: #fff;
+  position: relative;
+  border: 1.5px solid #fff;
+  flex: none;
+}
+.sw:after {
+  content: "";
+  position: absolute;
+  top: 50%; /* SỬA: Đẩy xuống giữa */
+  transform: translateY(-50%); /* THÊM: Tự động căn giữa trục dọc */
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #bbb;
+  transition: 0.2s;
+}
+.sw.on {
+  background: #f25c05;
+}
+.sw.on:after {
+  left: 28px;
+  background: #ffe79a;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1vw;
+  flex-wrap: nowrap; /* đổi từ wrap thành nowrap */
+}
+
+.top > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.top .acts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 12px;
+  flex: none;
+}
+
+/* Xóa đoạn cũ và thay bằng code này trong panels.css */
+.lang {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Chia 2 cột bằng nhau */
+  border: 2px solid #fff; /* Viền trắng giống .seg */
+  border-radius: 8px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.15); /* Nền tối giống .seg */
+  isolation: isolate; /* Tạo lớp layer riêng để thanh trượt không đè lên chữ */
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* THỎI MÀU VÀNG CHẠY QUA CHẠY LẠI */
+.lang::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px); /* Chiếm nửa chiều rộng trừ đi padding */
+  background: var(--y);
+  border-radius: 4px;
+  z-index: 1; /* Nằm dưới chữ nhưng nằm trên khung */
+
+  /* HIỆU ỨNG LƯỚT */
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Khi nút thứ 2 (English) được chọn (.on) -> Trượt thỏi vàng sang phải */
+.lang:has(button:nth-child(2).on)::before {
+  transform: translateX(100%);
+}
+
+/* Định dạng chữ của 2 nút ngôn ngữ */
+.lang button {
+  position: relative;
+  z-index: 2; /* Nằm đè lên trên thỏi màu vàng */
+  padding: 0.6vh 1.2vw;
+  border: none;
+  background: transparent !important; /* Xóa background cố định */
+  border-radius: 4px;
+  color: #fff; /* Mặc định chữ trắng */
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Khi nút được bật (.on) -> Đổi chữ sang màu đen */
+.lang button.on {
+  color: #111;
+}
+
+/* Hiệu ứng hover cho nút (nếu chưa được chọn) */
+.lang button:hover:not(.on) {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ===== THANH CHỌN THEME (3 nút) - copy từ .lang, đổi sang 3 cột ===== */
+.theme {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau */
+  border: 2px solid #fff;
+  border-radius: 8px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  isolation: isolate;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Thỏi vàng chạy qua lại */
+.theme::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 3); /* 1/3 chiều rộng phần trong */
+  background: var(--y);
+  border-radius: 4px;
+  z-index: 1;
+  /* SỬA: thêm background để màu đổi mượt khi trượt */
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.25s ease;
+}
+
+/* SỬA: Nút thứ 2 (Pond) được chọn → trượt 1 ô + màu xanh ngọc nhạt */
+.theme:has(button:nth-child(2).on)::before {
+  transform: translateX(100%);
+  background: #96c8c8;
+}
+/* SỬA: Nút thứ 3 (Ocean) được chọn → trượt 2 ô + màu xanh biển */
+.theme:has(button:nth-child(3).on)::before {
+  transform: translateX(200%);
+  background: #1c6e94;
+}
+
+.theme button {
+  position: relative;
+  z-index: 2;
+  padding: 0.6vh 1.2vw;
+  border: none;
+  background: transparent !important;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.theme button.on {
+  color: #111;
+}
+
+.theme button:hover:not(.on) {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 1. Vị trí mặc định (Cho nút Back to focus ở trang Log không có .tabh) -> Nằm góc TRÊN bên phải */
+.btn {
+  border: 2px solid #fff;
+  border-radius: 8px;
+  padding: 0.8vh 1vw;
+  font-weight: 500;
+  font-size: 13px;
+
+  position: absolute;
+  top: 3vh; /* Ghim lên mép trên của bảng */
+  right: 2.4vw; /* Căn lề phải */
+}
+
+/* 2. Nếu trang CÓ cục vàng .tabh (Trang Setting có nút Save AI) -> Nằm góc DƯỚI bên phải */
+body:has(.tabh) .btn {
+  top: auto; /* Hủy ghim mép trên */
+  bottom: 4vh; /* Ghim xuống mép dưới */
+}
+
+.kw {
+  display: flex;
+  gap: 0.8vw;
+  align-items: center;
+  border: 2px solid #fff;
+  border-radius: 14px;
+  padding: 1.4vh 1vw;
+  margin-top: 1.4vh;
+  flex-wrap: wrap;
+}
+.chip {
+  background: #ffe79a;
+  color: #222;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.7vh 0.8vw;
+}
+.chip .x {
+  cursor: pointer;
+  margin-left: 4px;
+}
+.kw input {
+  flex: 1;
+  min-width: 200px;
+  background: none;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  font: inherit;
+}
+.kw input::placeholder {
+  color: #fff;
+  opacity: 0.7;
+}
+.log {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  padding: 2vh 0.6vw;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+.log .av {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  flex: none;
+}
+
+.log img.av {
+  display: block; /* ảnh không dùng grid như ô chữ */
+  object-fit: contain;
+}
+
+.side button[data-tab="intro"] img {
+  width: 63%;
+  height: 63%;
+}
+/* Icon nguồn thông báo */
+.src {
+  gap: 1vw;
+}
+.src-ico {
+  width: clamp(34px, 5.4vh, 48px);
+  height: clamp(34px, 5.4vh, 48px);
+  border-radius: 10px;
+  object-fit: contain;
+  flex: none;
+}
+
+/* Phóng to riêng ô Messenger (ô thứ 2 trong lưới) */
+.grid .src:nth-child(2) .src-ico {
+  transform: scale(1.2);
+}
+
+/* Phóng to icon Messenger ở trang Log */
+.log img.av[src*="messenger"] {
+  transform: scale(1.3);
+}
+
+.src-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.log small {
+  font-size: 12px;
+  margin-left: 0.6vw;
+}
+.log p {
+  font-size: 13px;
+}
+.log .ur {
+  margin-left: auto;
+  background: #fff08c;
+  color: #222;
+  font-weight: 700;
+  padding: 0.5vh 0.8vw;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.fb {
+  margin-top: 3vh;
+  border: 2px solid #fff;
+  border-radius: 14px;
+  padding: 1.6vh 1vw;
+  font: inherit;
+
+  background: transparent;
+  color: #fff;
+  width: 100%;
+  font-family: inherit;
+
+  /* Bổ sung thuộc tính này để xóa triệt để viền kéo ở góc */
+  resize: none;
+}
+
+/* Giữ nguyên phần hiệu ứng viền vàng khi click này của bạn */
+.fb:focus,
+.fb:focus-visible {
+  outline: none !important;
+  border-color: var(--y);
+  box-shadow: 0 0 0 1px var(--y);
+}
+
+/*Chữ feedback*/
+.fb::placeholder {
+  color: #fff; /* Thay bằng mã màu bạn muốn */
+  opacity: 0.7; /* (Tùy chọn) Độ mờ để phân biệt với chữ người dùng gõ thật */
+}
+/* ===== NÚT SENT ===== */
+.sent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.4vh 0 0 auto; /* nằm dưới ô feedback, lệch sang phải */
+  min-width: 90px;
+  padding: 0.8vh 1vw;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* chỉ chuột vào -> phình ra + vàng */
+.sent:hover {
+  transform: scale(1.12);
+  background: var(--y);
+  border-color: var(--y);
+  color: #111;
+  border: 2px solid #fff;
+}
+
+/* icon tick mặc định ẩn */
+.sent .tick {
+  display: none;
+}
+
+/* bấm xong -> ẩn chữ, hiện tick */
+.sent.done {
+  background: var(--y);
+  border-color: var(--y);
+  color: #111;
+  border: 2px solid #fff;
+}
+.sent.done .lbl {
+  display: none;
+}
+.sent.done .tick {
+  display: block;
+}
+
+/* fire icon*/
+.score img {
+  width: clamp(22px, 4.2vh, 40px);
+  height: clamp(22px, 4.2vh, 40px);
+  object-fit: contain;
+  display: block;
+}
+
+/* Icon ảnh dùng chung: to bằng chữ bên cạnh Cảnh báo Urgent*/
+.log .ur {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.log .ur img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+  flex: none;
+}

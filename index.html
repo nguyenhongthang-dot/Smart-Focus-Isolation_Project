@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>SFIT – Smart Focus Isolation</title>
+    <!-- Đã thêm Poller+One vào link font bên dưới -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poller+One&family=Inter:wght@400;500;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/timer.css" />
+    <link rel="stylesheet" href="css/panels.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <div class="logo">
+        <div class="row"><img src="assets/logo.png" alt="" /><b>SFIT</b></div>
+        <span>Smart Focus Isolation</span>
+      </div>
+
+      <div class="score">
+        <div class="pt">
+          <span id="ico-fire" style="display: flex"></span>
+        </div>
+      </div>
+
+      <div class="side" id="side"></div>
+      <div class="vol-left" id="ico-vol"></div>
+
+      <div class="pills">
+        <div class="pill">Mô hình AI : <i>Qwen 2.5</i></div>
+        <div class="pill">Đã kết nối : <i>4 nguồn</i></div>
+        <div class="pill">Đã chặn : <i>12 tin</i></div>
+      </div>
+
+      <div id="view"></div>
+    </div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/intro.js"></script>
+    <script src="js/log.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

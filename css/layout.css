@@ -1,0 +1,228 @@
+/* Logo, thanh bên, pills, điểm số */
+.logo {
+  left: 4vw;
+  top: 4vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 3;
+}
+.logo .row {
+  display: flex;
+  align-items: center; /* Căn mép dưới của chữ SFIT bằng với chân của Icon */
+  gap: 0.8vw; /* Khoảng cách giữa icon và chữ SFIT */
+}
+
+.logo img {
+  height: clamp(
+    40px,
+    6.5vh,
+    65px
+  ); /* Đảm bảo đủ chiều cao để hiện phần màu đen ở đáy */
+  width: auto;
+  object-fit: contain;
+}
+
+.logo b {
+  font-family: "Poller One", cursive, sans-serif;
+  font-weight: 500;
+
+  /* TĂNG THÔNG SỐ Ở ĐÂY (Ví dụ tăng từ 32px-58px lên 40px-75px): */
+  font-size: clamp(32px, 8vh, 60px);
+
+  /* Nối rộng height & line-height tương ứng để chữ không bị bó hẹp: */
+  height: auto;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.01em;
+}
+
+.logo span {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-size: clamp(13px, 2.5vh, 22px);
+  margin-top: 0.4vh;
+  letter-spacing: 0.01em;
+}
+
+/* Thanh điều khiển*/
+/* Thanh điều khiển */
+.side {
+  position: relative;
+  left: 8vw;
+  top: 45%;
+  transform: translateY(-62%);
+  width: clamp(54px, 5.6vw, 76px);
+  padding: 1.4vh 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6vh;
+  z-index: 3;
+  isolation: isolate; /* Tạo layer cho thỏi màu vàng trượt phía dưới nút */
+}
+
+/* KHỐI TRÒN VÀNG CHẠY TRƯỢT DỌC */
+.side::before {
+  content: "";
+  position: absolute;
+  top: 1.4vh; /* Bắt đầu từ vị trí nút đầu tiên */
+  width: clamp(40px, 4vw, 56px);
+  height: clamp(40px, 4vw, 56px);
+  border-radius: 50%;
+  background: var(--y);
+  z-index: 1;
+  /* Hiệu ứng trượt dọc trong 0.25 giây */
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Vị trí trượt tương ứng từng nút (Nút 1 -> Nút 4) */
+.side:has(button:nth-child(1).on)::before {
+  transform: translateY(0);
+}
+.side:has(button:nth-child(2).on)::before {
+  /* Trượt xuống nút 2 = (Chiều cao nút + Khoảng cách gap) */
+  transform: translateY(calc(clamp(40px, 4vw, 56px) + 1.6vh));
+}
+.side:has(button:nth-child(3).on)::before {
+  /* Trượt xuống nút 3 */
+  transform: translateY(calc((clamp(40px, 4vw, 56px) + 1.6vh) * 2));
+}
+.side:has(button:nth-child(4).on)::before {
+  /* Trượt xuống nút 4 */
+  transform: translateY(calc((clamp(40px, 4vw, 56px) + 1.6vh) * 3));
+}
+
+/* Các nút bấm bên trong */
+.side button {
+  position: relative;
+  z-index: 2; /* Để icon nằm trên thỏi màu vàng */
+  width: clamp(40px, 4vw, 56px);
+  height: clamp(40px, 4vw, 56px);
+  border-radius: 50%;
+  border: none;
+  background: transparent !important; /* Xóa background gốc của nút */
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+/* Đổi màu SVG/Icon khi active */
+.side button.on svg,
+.side svg {
+  width: 58%;
+  height: 58%;
+}
+
+.side img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  display: block;
+}
+
+.pills {
+  left: 2vw;
+  bottom: 7vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh; /* Tăng khoảng cách giữa các hàng để thoáng hơn */
+  width: clamp(200px, 18vw, 280px); /* TĂNG width lên để kéo dài các hàng */
+  z-index: 3;
+}
+
+.pill {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.2vh 1.2vw; /* TĂNG padding để các hàng dày hơn (cao hơn) */
+  border: 1.5px solid var(--line); /* Nếu viền mờ, có thể tăng lên 2px */
+  border-radius: 999px;
+
+  /* TĂNG kích thước chữ ở đây */
+  font-size: clamp(12px, calc(1.4vh + 0.3vw), 16px);
+
+  font-weight: 700;
+  background: rgba(
+    0 0,
+    0,
+    0.08
+  ); /* Có thể tăng độ đậm của background (ví dụ 0.15) nếu muốn rõ hơn */
+}
+
+.pill i {
+  font-style: normal;
+  color: #ffe79a;
+}
+
+/* nút màu trắng */
+.score {
+  right: 7vw;
+  top: 4.4vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.4vh;
+  z-index: 3;
+}
+
+.score .pt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(44px, 7vh, 64px);
+  height: clamp(44px, 7vh, 64px);
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.score svg {
+  width: clamp(22px, 4.2vh, 40px);
+  height: clamp(22px, 4.2vh, 40px);
+}
+
+/* 2. Tạo hình tròn tách rời cho nút loa bên dưới */
+.vol-left {
+  position: absolute;
+  left: 8vw; /* Giữ cùng trục ngang với thanh .side */
+  top: 60%; /* Đặt vị trí nằm bên dưới thanh .side, bạn có thể tăng/giảm % này */
+
+  /* Tạo khung hình tròn bằng đúng bề rộng của thanh .side */
+  width: clamp(54px, 5.6vw, 76px);
+  height: clamp(54px, 5.6vw, 76px);
+  border-radius: 50%;
+
+  /* Màu nền kính và hiệu ứng y chang thanh .side */
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* Căn giữa icon loa vào chính giữa hình tròn */
+  display: grid;
+  place-items: center;
+  z-index: 3;
+  cursor: pointer;
+
+  /* Nền đen rất mỏng, nhìn xuyên được phía sau */
+  background: rgba(0, 0, 0, 0.15);
+
+  /* Không blur để giữ nguyên vân nền phía sau */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Kích thước icon loa bên trong nút tròn */
+.vol-left svg,
+.vol-left img {
+  width: 45%;
+  height: 55%;
+  object-fit: contain;
+
+  transform: scaleX(-1);
+}
